@@ -1,6 +1,6 @@
 # Experiments for: Universal approxmiation and model compression for radial neural networks (NeurIPS 2022 Submission)
 
-This repository accompanies the submission our NeurIPS May 2022 Submission. 
+This repository accompanies the submission our NeurIPS May 2022 Submission. This code was adapted from this repo: https://github.com/ivganev/QR-decomposition-radial-NNs. The terminology and formulation of the current paper differs from that of the old paper and we have not updated everything. The experiments are still valid. 
 
 ## The file source.py
 
