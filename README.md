@@ -40,10 +40,10 @@ For training models, we have three different types of training loops:
 
 In this experiment, we instantiate a radial neural network with weights W and show that projected gradient descent on the transformed network (with weights Q^{-1} W) matches usual gradient descent on the compressed network. Specifically, the values of the loss function are the same in both training regimes, epoch by epoch.  We also check the neural functions of the original and compressed networks match.
 
-    python script-experiment-6-1-and-6-2.py
+    python script-experiment-1-and-2.py
 
 ## The file script-experiment-3.py
 
 In this experiment, we instantiate a radial neural network with weights W and a somewhat large dimension vector. We train both the original model and the reduced model (with compressed weights coming from the QR-compress algorithm applied to W) with usual gradient descent using a stopping value for the loss function. We show that the reduced model achieves this low value for the loss function after less time (albeit after more epochs).
 
-    python script-experiment-6-3.py
+    python script-experiment-3.py
