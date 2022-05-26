@@ -14,7 +14,7 @@ torch.manual_seed(1)
 
 
 #################################
-## Run first two experiments from Section 6
+## Run first two experiments from Section 7
 ## - Experiment 1: Verify Theorem 5, that
 ##     Neural functions f_W and f_{W^red} match
 ## - Experiment 2: Verify Theorem 7, that
