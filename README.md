@@ -1,12 +1,12 @@
-# Experiments for: Universal approxmiation and model compression for radial neural networks
+# Experiments for: Universal approximation and model compression for radial neural networks
 
-The python files in this folder accompany the submission the NeurIPS 2022 Submission titled 'Universal approxmiation and model compression for radial neural networks'. 
+The python files in this folder accompany the submission the NeurIPS 2022 Submission titled 'Universal approximation and model compression for radial neural networks'. 
 
 ## The file source.py
 
 ### The representation class
 
-We create a class ```representation``` for the parameter space of an MLP with L layers. (The terminology comes from another project.) This class implements Algorthim 1 as the method ```QR_decomposition```. Furthermore, one can access:
+We create a class ```representation``` for the parameter space of an MLP with L layers. (The terminology comes from another project.) This class implements Algorithm 1 as the method ```QR_decomposition```. Furthermore, one can access:
 
 - The reduced representation R = W^{red}
 
