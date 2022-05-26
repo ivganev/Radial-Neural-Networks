@@ -15,7 +15,7 @@ torch.manual_seed(1)
 
 
 #################################
-## Run experiment 3 from Section 6: Demonstrate compressed
+## Run experiment 3 from Section 7: Demonstrate compressed
 ##      network reaches same loss in less  time.
 #################################
 def run_experiments(args):
