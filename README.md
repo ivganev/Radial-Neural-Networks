@@ -1,6 +1,6 @@
 # Experiments for: Universal approximation and model compression for radial neural networks
 
-The python files in this folder accompany the preprint 'Universal approximation and model compression for radial neural networks'.  
+The python files in this folder accompany the preprint 'Universal approximation and model compression for radial neural networks'.    
 
 ## The file source.py
 
