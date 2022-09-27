@@ -8,6 +8,14 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 
+import argparse
+from tqdm import tqdm
+
+from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
+from torchvision import datasets
+from torchvision.transforms import ToTensor
+
 dev = 'cpu'
 if torch.cuda.is_available():
     dev = 'cuda:0'
