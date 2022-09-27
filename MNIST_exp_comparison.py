@@ -14,7 +14,6 @@ from MNIST_source import *
 
 from statistics import mean, stdev
 
-
 torch.manual_seed(1)
 
 def main():
@@ -52,8 +51,9 @@ def main():
         relunet_final_losses.append(round(relu_los[-1].item(),5))
         relunet_final_accuracies.append(relu_acc[-1].item())
         
-    
-    print("Over %d trials:" % num_trials)
+    print("")
+    print("Over %d trials, each training for %d epochs:" % (num_trials, num_epochs))
+    print("")
 
     print("Radnet Loss = {1:.3e} +/- {2:.3e}".
         format(radnet_final_losses, mean(radnet_final_losses), stdev(radnet_final_losses))
