@@ -38,8 +38,8 @@ def stepReLU_eta(r):
     return r
 
 # Create uniform random noise in the unit d-ball
-def generate_noise(m, rad, d=28*28):
-    '''m is the number of samples, rad is the radius;
+def generate_noise(m, r, d=28*28):
+    '''m is the number of samples, r is the radius
     d is the total dimension, which is 28*28 for MNIST'''
     
     u = np.random.multivariate_normal(np.zeros(d),np.eye(d),m)  # an array of d normally distributed random variables
@@ -47,16 +47,24 @@ def generate_noise(m, rad, d=28*28):
     norm = norm.reshape(m,1)
     rands = np.random.uniform(size=m)**(1.0/d)
     rands = rands.reshape(m,1)
-    return rad*rands*u/norm
+    return r*rands*u/norm
 
-# Calculate the smallest distance between vectors in a tensor
-def smallest_distance(x: torch.tensor) -> float:
-    min_dist = float('inf')
+# Note: need to do the following before adding to a sample:
+# torch.tensor(generate_noise(m,radius,d)).reshape(m,1,28,28)
+
+# Calculate distance from each sample to the nearest other one
+def shortest_distances(x: torch.tensor) -> list:
+    result = []
     for i in range(len(x)):
+        radius = float('inf')
         for j in range(i):
-            if torch.linalg.norm(x[i] - x[j]).item() < min_dist:
-                min_dist = torch.linalg.norm(x[i] - x[j]).item()
-    return min_dist
+            if torch.linalg.norm(x[i] - x[j]).item() < radius:
+                radius = torch.linalg.norm(x[i] - x[j]).item()
+        for j in range(i+1,len(x)):
+            if torch.linalg.norm(x[i] - x[j]).item() < radius:
+                radius = torch.linalg.norm(x[i] - x[j]).item()
+        result.append(radius)
+    return result
 
 ####################################
 ####### Get MNIST data
@@ -73,10 +81,11 @@ batch_size = 128
 train_dataloader = DataLoader(training_data, batch_size, shuffle=True)
 
 train_features, train_labels = next(iter(train_dataloader))
-print(f"Feature batch shape: {train_features.size()}")
-print(f"Labels batch shape: {train_labels.size()}")
+
 
 if False:
+    print(f"Feature batch shape: {train_features.size()}")
+    print(f"Labels batch shape: {train_labels.size()}")
     img = train_features[0].squeeze()
     label = train_labels[0]
     plt.imshow(img, cmap="gray")
@@ -104,14 +113,16 @@ def add_noise(label, n=5, m=100, verbose=False):
         plt.imshow(selection[2].squeeze(), cmap="gray")
         plt.show()
     
-    radius = smallest_distance(selection)/2.5
-    noise = torch.tensor(generate_noise(m,radius,d=28*28)).reshape(m,1,28,28)
+    radii = shortest_distances(selection)
+    noise = torch.tensor(generate_noise(m,r=1,d=28*28)).reshape(m,1,28,28)
     
     noisy_samples = torch.Tensor(torch.Size([int(n*m), 1, 28, 28]))
     noisy_labels = torch.Tensor(torch.Size([n*m, n]))
     for i in range(n):
+        radius = radii[i]/2
+        assert radius > 1e-6, "some samples are too close together"
         for j in range(m):
-            noisy_samples[i*n + j]= selection[i] + noise[j]   
+            noisy_samples[i*m + j]= selection[i] + radius*noise[j]   
             noisy_labels[i*m + j]=  torch.eye(n)[i]
     
     if verbose:
@@ -120,6 +131,8 @@ def add_noise(label, n=5, m=100, verbose=False):
         plt.imshow(noisy_samples[0][0], cmap="gray")
         plt.show()
         plt.imshow(noisy_samples[1][0], cmap="gray")
+        
+    # Need to add shuffle
     
     return noisy_samples, noisy_labels
 
@@ -127,31 +140,37 @@ def add_noise(label, n=5, m=100, verbose=False):
 # torch.eye(n).repeat_interleave(m, dim=0)
 
 ####################################
-####### Train two networks
+####### Train both a radnet and an MLP
 ####################################
 
-def train_both(num_samples, m_copies, dim_vector, label=3):
+def train_both(num_samples, m_copies, dim_vector, label=3, verbose=False, num_epochs=1000, lr_radnet = 0.05, lr_mlp=0.05):
     noisy_threes, noisy_labels = add_noise(label=3, n=int(num_samples), m=int(m_copies), verbose =False)
     noisy_threes_flat = noisy_threes.flatten(1)
     
-    print('')
-    print('### Data description')
-    print('number or original images =', num_samples)
-    print('number of copies of each =', m_copies)
-    print('dimension vector =', dim_vector)
-    print('')
+    if verbose:
+        print('')
+        print('### Data description')
+        print('number or original images =', num_samples)
+        print('number of copies of each =', m_copies)
+        print('dimension vector =', dim_vector)
+        print('')
     
-    print('#### Training stepReLU radnet:')
+    if verbose:
+        print('#### Training stepReLU radnet:')
     radnet = RadNet(eta=stepReLU_eta, dims=dim_vector, has_bias=False)
-    model_trained, model_losses = training_loop(
-        n_epochs = 2000, 
-        learning_rate = 0.05,
+    model_trained, model_losses, model_accuracies = ce_training_loop(
+        n_epochs = num_epochs, 
+        learning_rate = lr_radnet,
         model = radnet,
         params = list(radnet.parameters()),
         x_train = noisy_threes_flat,
         y_train = noisy_labels,
-        verbose=True)
+        verbose=verbose)
     
+    if verbose:  
+        print('')    
+        print('#### Training ReLU MLP:')
+
     relu_net = torch.nn.Sequential(
         torch.nn.Linear(28*28, dim_vector[1]),
         torch.nn.ReLU(),
@@ -159,42 +178,19 @@ def train_both(num_samples, m_copies, dim_vector, label=3):
         torch.nn.ReLU(),
         torch.nn.Linear(dim_vector[2], dim_vector[3]),
         torch.nn.ReLU(),
-        torch.nn.Linear(dim_vector[3],1)
+        torch.nn.Linear(dim_vector[3],num_samples)
         )
     
-    print('')
-    print('#### Training ReLU MLP:')
-    
-    relu_model_trained, relu_model_losses = training_loop(
-        n_epochs = 2000, 
-        learning_rate = 0.05,
+    relu_model_trained, relu_model_losses, relu_model_accuracies = ce_training_loop(
+        n_epochs = num_epochs, 
+        learning_rate = lr_mlp,
         model = relu_net,
         params = list(relu_net.parameters()),
         x_train = noisy_threes_flat,
         y_train = noisy_labels,
-        verbose=True)
+        verbose=verbose)
     
-    return
+    return model_losses, model_accuracies, relu_model_losses, relu_model_accuracies 
     
-
-####################################
-####### Run experiment
-####################################
-
-ns = [4,7,10]
-ms = [100,500,1000]
-d= 28*28
-dim_vecs = [
-    [d, d+1, d+2, d+3, 1],
-    [d, d+1, d+2, d+3, d+4, 1],
-    [d, d+1, d+2, d+3, d+4, d+5, 1]]
-
-if False:
-    for dims in dim_vecs:
-        for n in ns:
-            for m in ms:
-                train_both(
-                    num_samples = n,
-                    m_copies = m,
-                    dim_vector= dims)
+    
                 

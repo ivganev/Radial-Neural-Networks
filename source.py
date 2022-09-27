@@ -361,6 +361,7 @@ def masks(reduced_dims, orig_dims):
 
 #################################
 ## Training loop with usual gradient descent
+## Mean square error loss function
 ## Optimizer excluded to remove randomness
 #################################
 
@@ -385,6 +386,44 @@ def training_loop(n_epochs, learning_rate, model, params, x_train, y_train, verb
                 print('Epoch %d, Loss %f' % (epoch, float(loss)))
             
     return model, losses
+
+#################################
+## Training loop with usual gradient descent
+## Cross entropy loss function
+## Optimizer excluded to remove randomness
+#################################
+
+def ce_training_loop(n_epochs, learning_rate, model, params, x_train, y_train, verbose=True):
+    losses = []
+    accuracies = []
+    y_classes = y_train.argmax(axis =1)
+    
+    for epoch in range(1, n_epochs + 1):
+        for p in params:
+            if p.grad is not None: 
+                p.grad.zero_()
+        
+        y_pred = model(x_train)
+        pred_class = torch.argmax(y_pred, dim=1)
+        accuracy = torch.mean((pred_class == y_classes).to(float))
+        accuracies.append(accuracy)
+        
+        loss_function = torch.nn.CrossEntropyLoss()
+        loss = loss_function(y_pred, y_classes)
+        losses.append(loss)
+        loss.backward()
+        
+        with torch.no_grad(): 
+            for p in params:
+                p -= learning_rate * p.grad
+                
+        if verbose:
+            if epoch ==1 or epoch % 500 == 0:
+                print('Epoch %d, Loss %f, Accuracy %f' % (epoch, float(loss), float(accuracy)))
+
+            
+    return model, losses, accuracies
+
 
 
 #################################
