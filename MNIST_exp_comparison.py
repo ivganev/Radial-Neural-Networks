@@ -22,16 +22,16 @@ def main():
     n = 3
     
     # Number of noisy samples for each original sample
-    m = 10
+    m = 1000
     
     # Widths of both neural networks
     widths = [28*28, 28*28 + 1, 28*28 + 2, n]
     
     # Number of epochs
-    num_epochs = 100
+    num_epochs = 1000
 
     # Number of trials
-    num_trials = 2
+    num_trials = 10
     
     radnet_final_losses = []
     radnet_final_accuracies = []
