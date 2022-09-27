@@ -28,7 +28,7 @@ def main():
     widths = [28*28, 28*28 + 1, 28*28 + 2, n]
     
     # Number of epochs
-    num_epochs = 1000
+    num_epochs = 100
 
     # Number of trials
     num_trials = 10
