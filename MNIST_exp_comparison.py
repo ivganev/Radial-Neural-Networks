@@ -55,20 +55,20 @@ def main():
     print("Over %d trials, each training for %d epochs:" % (num_trials, num_epochs))
     print("")
 
-    print("Radnet Loss = {1:.3e} +/- {2:.3e}".
+    print("Radnet Loss = {1:.3g} +/- {2:.3e}".
         format(radnet_final_losses, mean(radnet_final_losses), stdev(radnet_final_losses))
     )
 
-    print("Radnet Accuracy = {1:.3e} +/- {2:.3e}".
+    print("Radnet Accuracy = {1:.3g} +/- {2:.3e}".
         format(radnet_final_accuracies, mean(radnet_final_accuracies), stdev(radnet_final_accuracies))
     )
 
-    print("ReLU MLP Loss = {1:.3e} +/- {2:.3e}".
+    print("ReLU MLP Loss = {1:.3g} +/- {2:.3e}".
         format(relunet_final_losses, mean(relunet_final_losses), stdev(relunet_final_losses))
     )
 
     print(
-        "ReLU MLP Accuracy = {1:.3e} +/- {2:.3e}".
+        "ReLU MLP Accuracy = {1:.3g} +/- {2:.3e}".
         format(relunet_final_accuracies, mean(relunet_final_accuracies), stdev(relunet_final_accuracies))
     )
         
