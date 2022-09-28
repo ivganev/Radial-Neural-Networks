@@ -10,7 +10,7 @@ import argparse
 from tqdm import tqdm
 
 from source import *
-from MNIST_source import *
+from source_MNIST import *
 
 from statistics import mean, stdev
 

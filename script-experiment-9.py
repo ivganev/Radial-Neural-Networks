@@ -19,7 +19,7 @@ from torchvision.transforms import ToTensor
 from statistics import mean, stdev
 
 from source import *
-from MNIST_source import *
+from source_MNIST import *
 
 
 training_data = datasets.MNIST(

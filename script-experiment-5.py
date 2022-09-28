@@ -19,7 +19,7 @@ from torchvision.transforms import ToTensor
 from statistics import mean, stdev
 
 from source import *
-from MNIST_source import *
+from source_MNIST import *
 
 torch.manual_seed(1)
 np.random.seed(1)
