@@ -30,7 +30,7 @@ def main():
     n = 3
     
     # Number of noisy samples for each original sample
-    m = 10
+    m = 100
     
     # Widths of both neural networks
     widths = [28*28, 28*28 + 1, 28*28 + 2, n]
@@ -39,7 +39,7 @@ def main():
     num_trials = 5
     
     # Number of epochs
-    num_epochs = 300
+    num_epochs = 100
     
     # Noise level
     noise_scale = 3

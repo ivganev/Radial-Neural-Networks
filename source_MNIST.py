@@ -176,9 +176,7 @@ def train_both(num_samples, m_copies, dim_vector, label=3, verbose=False, num_ep
         torch.nn.ReLU(),
         torch.nn.Linear(dim_vector[1], dim_vector[2]),
         torch.nn.ReLU(),
-        torch.nn.Linear(dim_vector[2], dim_vector[3]),
-        torch.nn.ReLU(),
-        torch.nn.Linear(dim_vector[3],num_samples)
+        torch.nn.Linear(dim_vector[2],num_samples)
         )
     
     relu_model_trained, relu_model_losses, relu_model_accuracies = ce_training_loop(
