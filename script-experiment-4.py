@@ -15,8 +15,11 @@ from MNIST_source import *
 from statistics import mean, stdev
 
 torch.manual_seed(1)
+np.random.seed(1)
 
 def main():
+    
+    #### Set hyperparameters
     
     # Number of original images
     n = 3
@@ -33,6 +36,11 @@ def main():
     # Number of trials
     num_trials = 10
     
+    # Noise level (>0.5 means there will be overlap)
+    noise_scale = 3
+    
+    #### Run trials
+    
     radnet_final_losses = []
     radnet_final_accuracies = []
 
@@ -45,7 +53,8 @@ def main():
             m_copies = m,
             dim_vector= widths,
             verbose=False,
-            num_epochs=num_epochs)
+            num_epochs=num_epochs,
+            noise_scale = noise_scale)
         radnet_final_losses.append(round(rad_los[-1].item(),5))
         radnet_final_accuracies.append(rad_acc[-1].item())
         relunet_final_losses.append(round(relu_los[-1].item(),5))

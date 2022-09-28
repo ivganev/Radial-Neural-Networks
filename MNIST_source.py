@@ -98,7 +98,7 @@ if False:
 ####################################
 
 ## Select the threes
-def add_noise(label, n=5, m=100, verbose=False):
+def add_noise(label, n=5, m=100, verbose=False, noise_scale=0.5):
     '''label is one of 0,1,2,3,4,5,6,7,8,9;
     n is the number of original images; 
     m is the number of noisy samples per original image;
@@ -119,7 +119,7 @@ def add_noise(label, n=5, m=100, verbose=False):
     noisy_samples = torch.Tensor(torch.Size([int(n*m), 1, 28, 28]))
     noisy_labels = torch.Tensor(torch.Size([n*m, n]))
     for i in range(n):
-        radius = radii[i]/2
+        radius = radii[i] *noise_scale
         assert radius > 1e-6, "some samples are too close together"
         for j in range(m):
             noisy_samples[i*m + j]= selection[i] + radius*noise[j]   
@@ -143,8 +143,8 @@ def add_noise(label, n=5, m=100, verbose=False):
 ####### Train both a radnet and an MLP
 ####################################
 
-def train_both(num_samples, m_copies, dim_vector, label=3, verbose=False, num_epochs=1000, lr_radnet = 0.05, lr_mlp=0.05):
-    noisy_threes, noisy_labels = add_noise(label=3, n=int(num_samples), m=int(m_copies), verbose =False)
+def train_both(num_samples, m_copies, dim_vector, label=3, verbose=False, num_epochs=1000, lr_radnet = 0.05, lr_mlp=0.05, noise_scale=0.5):
+    noisy_threes, noisy_labels = add_noise(label=3, n=int(num_samples), m=int(m_copies), verbose =False, noise_scale=noise_scale)
     noisy_threes_flat = noisy_threes.flatten(1)
     
     if verbose:
