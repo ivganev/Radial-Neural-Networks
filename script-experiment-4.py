@@ -1,5 +1,6 @@
 import numpy as np
 from typing import List
+from collections import defaultdict
 
 import torch
 import torch.nn as nn
@@ -16,6 +17,7 @@ from statistics import mean, stdev
 
 torch.manual_seed(1)
 np.random.seed(1)
+device = 'cpu' # CUDA results are less reproducible
 
 def main():
     
@@ -25,13 +27,13 @@ def main():
     n = 3
     
     # Number of noisy samples for each original sample
-    m = 1000
+    m = 100
     
     # Widths of both neural networks
     widths = [28*28, 28*28 + 1, 28*28 + 2, n]
     
     # Number of epochs
-    num_epochs = 100
+    num_epochs = 150
 
     # Number of trials
     num_trials = 10
@@ -39,47 +41,37 @@ def main():
     # Noise level (>0.5 means there will be overlap)
     noise_scale = 3
     
+    # Verbosity
+    verbose = True
+    
     #### Run trials
     
-    radnet_final_losses = []
-    radnet_final_accuracies = []
-
-    relunet_final_losses = []
-    relunet_final_accuracies = []
+    metrics = ['train_loss', 'train_accuracy', 'test_loss', 'test_accuracy']
+    metric_values = defaultdict(lambda: defaultdict(list))
 
     for trial in tqdm(range(num_trials)):
-        rad_los, rad_acc, relu_los, relu_acc = train_both(
+        logs = train_both(
             num_samples = n,
             m_copies = m,
-            dim_vector= widths,
-            verbose=False,
-            num_epochs=num_epochs,
-            noise_scale = noise_scale)
-        radnet_final_losses.append(round(rad_los[-1].item(),5))
-        radnet_final_accuracies.append(rad_acc[-1].item())
-        relunet_final_losses.append(round(relu_los[-1].item(),5))
-        relunet_final_accuracies.append(relu_acc[-1].item())
+            dim_vector = widths,
+            verbose = verbose,
+            epochs = num_epochs,
+            noise_scale = noise_scale,
+            device = device)
+        for method, log in logs.items():
+            for metric in metrics:
+                metric_values[method][metric].append(log[metric][-1])
         
     print("")
     print("Over %d trials, each training for %d epochs:" % (num_trials, num_epochs))
     print("")
 
-    print("Radnet Loss = {1:.3g} +/- {2:.3e}".
-        format(radnet_final_losses, mean(radnet_final_losses), stdev(radnet_final_losses))
-    )
+    for method, values in metric_values.items():
+        for metric in metrics:
+            print("{0} {1} = {2:.3g} +/- {3:.3e}".
+                format(method, metric, mean(values[metric]), stdev(values[metric]))
+            )
 
-    print("Radnet Accuracy = {1:.3g} +/- {2:.3e}".
-        format(radnet_final_accuracies, mean(radnet_final_accuracies), stdev(radnet_final_accuracies))
-    )
+if __name__ == "__main__":
+    main()
 
-    print("ReLU MLP Loss = {1:.3g} +/- {2:.3e}".
-        format(relunet_final_losses, mean(relunet_final_losses), stdev(relunet_final_losses))
-    )
-
-    print(
-        "ReLU MLP Accuracy = {1:.3g} +/- {2:.3e}".
-        format(relunet_final_accuracies, mean(relunet_final_accuracies), stdev(relunet_final_accuracies))
-    )
-        
-
-main()

@@ -47,6 +47,8 @@ def main():
         left = False,
         labelbottom=False,
         labelleft=False)
+    plt.xlabel('Noise level = 0')
+
 
     plt.subplot(2,3,2)
     plt.imshow(noisy_threes_sc2[0][0], cmap="gray")
@@ -58,6 +60,8 @@ def main():
         left = False,
         labelbottom=False,
         labelleft=False)
+    plt.xlabel('Noise level = 1')
+
 
     plt.subplot(2,3,3)
     plt.imshow(noisy_threes_sc3[1][0], cmap="gray")
@@ -69,6 +73,7 @@ def main():
         left = False,
         labelbottom=False,
         labelleft=False)
+    plt.xlabel('Noise level = 3')
 
     plt.subplot(2,3,4)
     plt.imshow(orig_threes[1][0], cmap="gray")
@@ -80,6 +85,8 @@ def main():
         left = False,
         labelbottom=False,
         labelleft=False)
+    plt.xlabel('Noise level = 0')
+
 
     plt.subplot(2,3,5)
     plt.imshow(noisy_threes_sc2[m_copies][0], cmap="gray")
@@ -91,6 +98,8 @@ def main():
         left = False,
         labelbottom=False,
         labelleft=False)
+    plt.xlabel('Noise level = 1')
+
 
     plt.subplot(2,3,6)
     plt.imshow(noisy_threes_sc3[m_copies+1][0], cmap="gray")
@@ -102,9 +111,11 @@ def main():
         left = False,
         labelbottom=False,
         labelleft=False)
+    plt.xlabel('Noise level = 3')
 
     #plt.savefig('noisy_threes.png')
     plt.show()
+
 
     
 main()

@@ -21,8 +21,8 @@ from statistics import mean, stdev
 from source import *
 from source_MNIST import *
 
-torch.manual_seed(1)
-np.random.seed(1)
+#torch.manual_seed(1)
+#np.random.seed(1)
 
 
 def main():
@@ -39,29 +39,32 @@ def main():
     num_trials = 5
     
     # Number of epochs
-    num_epochs = 100
+    num_epochs = 150
     
     # Noise level
     noise_scale = 3
 
     for trial in tqdm(range(num_trials)):
-        rad_los, rad_acc, relu_los, relu_acc = train_both(
+        logs = train_both(
                 num_samples = n,
                 m_copies = m,
-                dim_vector= widths,
+                dim_vector = widths,
                 verbose=False,
-                num_epochs=num_epochs,
+                device='cpu',
+                epochs=num_epochs,
                 lr_radnet = 0.05, 
-                lr_mlp=0.05,
+                lr_mlp = 0.05,
                 noise_scale = noise_scale)
 
+        rad_loss  = logs['RadNet']['train_loss']
+        relu_loss = logs['ReLU MLP']['train_loss']
         if trial == 0:
-            plt.plot(torch.tensor(rad_los).detach(), color='blue', label='RadNet')
-            plt.plot(torch.tensor(relu_los).detach(), color='orange', label='ReLUNet')
+            plt.plot(torch.tensor(rad_loss).detach(), color='blue', label='RadNet')
+            plt.plot(torch.tensor(relu_loss).detach(), color='orange', label='ReLUNet')
 
         else:
-            plt.plot(torch.tensor(rad_los).detach(), color='blue')
-            plt.plot(torch.tensor(relu_los).detach(), color='orange')
+            plt.plot(torch.tensor(rad_loss).detach(), color='blue')
+            plt.plot(torch.tensor(relu_loss).detach(), color='orange')
 
         
     plt.title("Comparison of convergence rates")
@@ -69,6 +72,8 @@ def main():
     plt.ylabel("Loss")
     plt.legend()
     plt.show()
+    
+    
     
 main()
 
