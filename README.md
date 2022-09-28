@@ -1,6 +1,6 @@
 # Experiments for: Universal approximation and model compression for radial neural networks
 
-The python files in this folder accompany the preprint 'Universal approximation and model compression for radial neural networks'.    
+The python files in this folder accompany the manuscript 'Universal approximation and model compression for radial neural networks'.    
 
 ## The file source.py
 
@@ -47,3 +47,17 @@ In this experiment, we instantiate a radial neural network with weights W and sh
 In this experiment, we instantiate a radial neural network with weights W and a somewhat large dimension vector. We train both the original model and the reduced model (with compressed weights coming from the QR-compress algorithm applied to W) with usual gradient descent using a stopping value for the loss function. We show that the reduced model achieves this low value for the loss function after less time (albeit after more epochs).
 
     python script-experiment-3.py
+
+
+## The file script-experiment-4.py
+
+Noisy image recovery, comparision between a step-ReLU radial network and a ReLU MLP.
+
+    python script-experiment-4.py
+
+
+## The file script-experiment-5.py
+
+Convergence rate comparision in noisy image recovery.
+
+    python script-experiment-5.py
