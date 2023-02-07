@@ -154,7 +154,7 @@ def make_relu_network(dims):
     layers = []
     for i in range(len(dims) - 1):
         layers.append(torch.nn.Linear(dims[i], dims[i+1]))
-        if i+1 < len(dims):
+        if i+1 < len(dims) - 1:
             layers.append(torch.nn.ReLU())
     return torch.nn.Sequential(*layers)
 
