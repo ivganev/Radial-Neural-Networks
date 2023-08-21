@@ -72,7 +72,7 @@ def main():
     plt.ylabel("Loss")
     plt.legend()
     plt.show()
-    
+    plt.savefig('comparison.png')
     
     
 main()
