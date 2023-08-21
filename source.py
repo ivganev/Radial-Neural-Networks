@@ -131,6 +131,9 @@ class representation:
     
     
     def reduced_representation(self, padded=False):
+
+        n = self.n
+        L = self.L
                             
         if padded:
             
